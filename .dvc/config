@@ -1,0 +1,5 @@
+[core]
+    remote = icp
+['remote "icp"']
+    url = s3://spp2363/dvc/2024_ZnTrack_Workshop
+    endpointurl = https://minio.icp.uni-stuttgart.de
