@@ -12,4 +12,4 @@ with project:
         data=geom_opt.frames, model=model, thermo_interval=10, always_changed=True
     )
 
-project.build()
+project.repro()
