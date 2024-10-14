@@ -6,6 +6,20 @@ from rdkit2ase import smiles2conformers
 
 
 class Smiles2Conformers(zntrack.Node):
+    """Create multiple conformers from a SMILES string.
+
+    Attributes
+    ----------
+    smiles : str
+        The SMILES string to generate conformers for.
+    num_confs : int
+        The number of conformers to generate.
+    random_seed : int
+        The random seed for conformer generation.
+    max_attempts : int
+        The maximum number of attempts for conformer generation.
+    """
+
     smiles: str = zntrack.params()
     num_confs: int = zntrack.params()
     random_seed: int = zntrack.params(42)
@@ -14,6 +28,7 @@ class Smiles2Conformers(zntrack.Node):
     frames_path: pathlib.Path = zntrack.outs_path(zntrack.nwd / "frames.xyz")
 
     def run(self):
+        """Primary Node run method."""
         frames = smiles2conformers(
             smiles=self.smiles,
             numConfs=self.num_confs,
@@ -24,5 +39,6 @@ class Smiles2Conformers(zntrack.Node):
 
     @property
     def frames(self) -> list[ase.Atoms]:
+        """List of generated conformers."""
         with self.state.fs.open(self.frames_path, "r") as f:
             return list(ase.io.iread(f, index=":", format="extxyz"))

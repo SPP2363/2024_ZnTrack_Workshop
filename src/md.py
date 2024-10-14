@@ -11,6 +11,35 @@ from .models import MACE_MP_0
 
 
 class MolecularDynamics(zntrack.Node):
+    """Run molecular dynamics simulation.
+
+    Run a MD simulation using the Langevin integrator
+    within the ASE package.
+
+    Attributes
+    ----------
+    data : list[ase.Atoms]
+        Input data as a list of ASE Atoms objects.
+    model : MACE_MP_0
+        Model to use for computing energies and forces.
+    data_id : int
+        Index of the ase.Atoms to simulate.
+        Default to the last element in the data list.
+    temperature : float
+        Temperature of the simulation in Kelvin.
+        Default to 300 K.
+    thermo_interval : int
+        Interval for printing the thermodynamic properties.
+        Default to 50.
+    steps : int
+        Number of simulation steps.
+        Default to 1000.
+    trajectory : pathlib.Path
+        Path to the trajectory file.
+    thermo : pd.DataFrame
+        Dataframe containing the thermodynamic properties.
+    """
+
     data: list[ase.Atoms] = zntrack.deps()
     model: MACE_MP_0 = zntrack.deps()
 
@@ -25,6 +54,7 @@ class MolecularDynamics(zntrack.Node):
     )
 
     def run(self):
+        """Primary Node run method."""
         atoms = self.data[self.data_id]
         step = 0
         atoms.calc = self.model.get_model()
@@ -70,5 +100,6 @@ class MolecularDynamics(zntrack.Node):
 
     @property
     def frames(self):
+        """List of generated conformers."""
         with self.state.fs.open(self.trajectory, "rb") as f:
             return list(ase.io.iread(f, index=":", format="traj"))
