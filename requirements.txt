@@ -1,6 +1,6 @@
 zntrack==0.8.0a3
 dvc-s3==3.2.0
-pandas==2.2.3
 znjson==0.2.6
 mace-torch==0.3.6
 rdkit2ase==0.1.4
+zndraw==0.4.7
