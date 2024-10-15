@@ -1,0 +1,18 @@
+MolecularDynamics:
+  data_id: -1
+  model:
+    _cls: src.models.MACE_MP_0
+  steps: 1000
+  temperature: 300
+  thermo_interval: 10
+Smiles2Conformers:
+  max_attempts: 1000
+  num_confs: 10
+  random_seed: 42
+  smiles: C[C-]([P](C)([Pd]([NH3])(Cl)Cl)C)[P+](C)(C)C
+StructureOptimization:
+  data_id: -1
+  fmax: 0.05
+  model:
+    _cls: src.models.MACE_MP_0
+  optimizer: LBFGS
