@@ -1,0 +1,55 @@
+plots:
+- MolecularDynamics_thermo_0:
+    x:
+      nodes/MolecularDynamics/thermo.csv: step
+    y:
+      nodes/MolecularDynamics/thermo.csv: temp
+- MolecularDynamics_thermo_1:
+    x:
+      nodes/MolecularDynamics/thermo.csv: step
+    y:
+      nodes/MolecularDynamics/thermo.csv: epot
+- MolecularDynamics_thermo_2:
+    x:
+      nodes/MolecularDynamics/thermo.csv: step
+    y:
+      nodes/MolecularDynamics/thermo.csv: ekin
+- MolecularDynamics_thermo_3:
+    x:
+      nodes/MolecularDynamics/thermo.csv: step
+    y:
+      nodes/MolecularDynamics/thermo.csv: etot
+stages:
+  MolecularDynamics:
+    always_changed: true
+    cmd: zntrack run src.md.MolecularDynamics --name MolecularDynamics
+    deps:
+    - nodes/StructureOptimization/trajectory.traj
+    metrics:
+    - nodes/MolecularDynamics/node-meta.json:
+        cache: false
+    outs:
+    - nodes/MolecularDynamics/thermo.csv
+    - nodes/MolecularDynamics/trajectory.traj
+    params:
+    - MolecularDynamics
+  Smiles2Conformers:
+    cmd: zntrack run src.setup.Smiles2Conformers --name Smiles2Conformers
+    metrics:
+    - nodes/Smiles2Conformers/node-meta.json:
+        cache: false
+    outs:
+    - nodes/Smiles2Conformers/frames.xyz
+    params:
+    - Smiles2Conformers
+  StructureOptimization:
+    cmd: zntrack run src.structure_optimization.StructureOptimization --name StructureOptimization
+    deps:
+    - nodes/Smiles2Conformers/frames.xyz
+    metrics:
+    - nodes/StructureOptimization/node-meta.json:
+        cache: false
+    outs:
+    - nodes/StructureOptimization/trajectory.traj
+    params:
+    - StructureOptimization

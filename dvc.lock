@@ -1,0 +1,73 @@
+schema: '2.0'
+stages:
+  Smiles2Conformers:
+    cmd: zntrack run src.setup.Smiles2Conformers --name Smiles2Conformers
+    params:
+      params.yaml:
+        Smiles2Conformers:
+          max_attempts: 1000
+          num_confs: 10
+          random_seed: 42
+          smiles: N1=PN=PN=P1
+    outs:
+    - path: nodes/Smiles2Conformers/frames.xyz
+      hash: md5
+      md5: 43eb561c2cca183027da37c0e35463df
+      size: 4350
+    - path: nodes/Smiles2Conformers/node-meta.json
+      hash: md5
+      md5: 80aed4806eb93b4d2896d84585a8c253
+      size: 64
+  StructureOptimization:
+    cmd: zntrack run src.structure_optimization.StructureOptimization --name StructureOptimization
+    deps:
+    - path: nodes/Smiles2Conformers/frames.xyz
+      hash: md5
+      md5: 43eb561c2cca183027da37c0e35463df
+      size: 4350
+    params:
+      params.yaml:
+        StructureOptimization:
+          data_id: -1
+          fmax: 0.05
+          model:
+            _cls: src.models.MACE_MP_0
+          optimizer: LBFGS
+    outs:
+    - path: nodes/StructureOptimization/node-meta.json
+      hash: md5
+      md5: bf59614c975be1a082c5b28a0f5ab2c2
+      size: 64
+    - path: nodes/StructureOptimization/trajectory.traj
+      hash: md5
+      md5: 20d1dd8942a9221118e9c81dbcbf0ab9
+      size: 4566
+  MolecularDynamics:
+    cmd: zntrack run src.md.MolecularDynamics --name MolecularDynamics
+    deps:
+    - path: nodes/StructureOptimization/trajectory.traj
+      hash: md5
+      md5: 20d1dd8942a9221118e9c81dbcbf0ab9
+      size: 4566
+    params:
+      params.yaml:
+        MolecularDynamics:
+          data_id: -1
+          model:
+            _cls: src.models.MACE_MP_0
+          steps: 1000
+          temperature: 300
+          thermo_interval: 10
+    outs:
+    - path: nodes/MolecularDynamics/node-meta.json
+      hash: md5
+      md5: 395a7974b214542d8523ddaf1eb4efd3
+      size: 64
+    - path: nodes/MolecularDynamics/thermo.csv
+      hash: md5
+      md5: e65c85d240f1f2d0d588d309a4c46522
+      size: 8681
+    - path: nodes/MolecularDynamics/trajectory.traj
+      hash: md5
+      md5: 44e29cb48d4f84bf077012391b479439
+      size: 778034
